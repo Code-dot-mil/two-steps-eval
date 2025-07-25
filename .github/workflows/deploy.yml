@@ -5,8 +5,16 @@ on:
     branches:
       - main
       - "*"
+  pull_request:
+    types: [opened, ready_for_review]    
 
 jobs:
+  auto_assign:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: kentaro-m/auto-assign-action@v1.2.4
+      
   # Build stage - converting md file to html using MkDocs
   convert_md_to_html:
     runs-on: ubuntu-latest
