@@ -16,10 +16,10 @@ Include any extra information or considerations for reviewers, such as impacted 
 - [ ] I have already covered the unit testing.
 
 ## Assign to me - contributors
-##/assign me
+/assign me
 
 ## Reviewers/Approvals
-##/assign_reviewer @hshah @vsong
+/assign_reviewer @hshah @vsong
 
 ## Final Reviewers/Merger
-##/assign_reviewer @hshah
+/assign_reviewer @hshah
