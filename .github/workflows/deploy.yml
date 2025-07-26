@@ -33,7 +33,7 @@ jobs:
           pwd
           ls -al .github
           cat .github/auto_assign.yml || echo "No auto_assign.yml found"    
-      - uses: kentaro-m/auto-assign-action@v1.2.4
+      - uses: kentaro-m/auto-assign-action@v1
       
   # Build stage - converting md file to html using MkDocs
   convert_md_to_html:
