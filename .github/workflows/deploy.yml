@@ -32,8 +32,16 @@ jobs:
         run: |
           pwd
           ls -al .github
-          cat .github/auto_assign.yml || echo "No auto_assign.yml found"    
-      - uses: kentaro-m/auto-assign-action@v1.2.4
+          cat .github/auto_assign.yml || echo "No auto_assign.yml found"
+
+      - uses: actions/checkout@v3
+      - name: Assign reviewers
+        uses: ahmadnassri/action-assign-reviewers@v1
+        with:
+          reviewers: hshah-mitre
+          assignees: hshah-mitre
+          
+      #- uses: kentaro-m/auto-assign-action@v1.2.4
       
   # Build stage - converting md file to html using MkDocs
   convert_md_to_html:
