@@ -19,6 +19,11 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
+      - name: Print working directory and files
+        run: |
+          pwd
+          ls -al .github
+          cat .github/auto_assign.yml || echo "No auto_assign.yml found"    
       - uses: kentaro-m/auto-assign-action@v1.2.4
       
   # Build stage - converting md file to html using MkDocs
