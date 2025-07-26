@@ -37,8 +37,8 @@ jobs:
       - uses: actions/checkout@v3
       - name: Assign reviewers
         uses: kentaro-m/auto-assign-action@v1.2.4
-          
-      #- uses: kentaro-m/auto-assign-action@v1.2.4
+        with:
+          reviewers: hshah-mitre
       
   # Build stage - converting md file to html using MkDocs
   convert_md_to_html:
