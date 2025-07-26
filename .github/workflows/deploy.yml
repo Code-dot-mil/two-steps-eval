@@ -4,14 +4,19 @@ on:
   push:
     branches:
       - main
+      - "*"
 
   pull_request:
-    types: [opened, ready_for_review]    
+    types: [opened, ready_for_review, synchronize]   
+
+permissions:
+  pull-requests: write
+    
 
 jobs:
   auto_assign:
     runs-on: ubuntu-latest
-    #if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request'
     steps:
       - uses: kentaro-m/auto-assign-action@v1.2.4
       
