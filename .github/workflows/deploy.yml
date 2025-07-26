@@ -35,10 +35,7 @@ jobs:
           cat .github/auto_assign.yml || echo "No auto_assign.yml found"
 
       - uses: actions/checkout@v3
-      - name: Assign reviewers
-        uses: kentaro-m/auto-assign-action@v1.2.4
-        with:
-          reviewers: hshah-mitre
+
       - name: Assign assignee via GitHub API
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
