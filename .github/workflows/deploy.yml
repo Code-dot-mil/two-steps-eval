@@ -20,7 +20,14 @@ jobs:
     if: github.event_name == 'pull_request'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3    
+        uses: actions/checkout@v3
+      - name: Print repo structure
+        run: |
+          pwd
+          ls -al
+          ls -al .github || echo ".github directory does not exist"
+          cat .github/auto_assign.yml || echo "No .github/auto_assign.yml found"
+        
       - name: Print working directory and files
         run: |
           pwd
