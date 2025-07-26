@@ -1,13 +1,6 @@
 addReviewers: true
 reviewers:
   - hshah-mitre
-
 addAssignees: true
 assignees:
   - hshah-mitre
-
-# Optionally, you can set number of reviewers/assignees to assign randomly
-# numberOfReviewers: 2
-# numberOfAssignees: 1
-
-# You can also restrict by label, branch, etc.
