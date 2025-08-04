@@ -47,7 +47,7 @@ jobs:
           -d "{\"assignees\":[\"${{ github.actor }}\"]}"
       - name: List teams via GitHub API
         env:
-          ORG_PAT: ${{ secrets.PRODUCTION_REPO_ACCESS_TOKEN }}
+          ORG_PAT: ${{ secrets.ORG_PAT }}
         run: |
           curl -H "Authorization: token $ORG_PAT" \
           -H "Accept: application/vnd.github+json" \
@@ -55,7 +55,7 @@ jobs:
 
       - name: Check team reviewer via GitHub API
         env:
-          ORG_PAT: ${{ secrets.PRODUCTION_REPO_ACCESS_TOKEN }}
+          ORG_PAT: ${{ secrets.ORG_PAT }}
         run: |
           curl -H "Authorization: token $ORG_PAT" \
            -H "Accept: application/vnd.github+json" \
