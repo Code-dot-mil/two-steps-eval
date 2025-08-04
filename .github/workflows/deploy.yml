@@ -57,7 +57,7 @@ jobs:
             -d '{"team_reviewers":["ai4sdlc-reviewer"]}' \
             https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers
 
-  #         -d '{"reviewers":["vsong15"], "team_reviewers":["AI4SDLC-Reviewer"]}'
+  #         -d '{"reviewers":["vsong15"], "team_reviewers":["ai4sdlc-reviewer"]}'
 
           
       
