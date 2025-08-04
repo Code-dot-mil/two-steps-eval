@@ -46,18 +46,17 @@ jobs:
           https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/assignees \
           -d "{\"assignees\":[\"${{ github.actor }}\"]}"
 
-      - name: Assign reviewer via GitHub API
+      - name: Assign team reviewer via GitHub API
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ORG_PAT: ${{ secrets.ORG_PAT }}
         run: |
           curl -X POST \
-            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Authorization: token $ORG_PAT" \
             -H "Accept: application/vnd.github+json" \
-            https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers \
-            -d '{"reviewers":["vsong15"], "team_reviewers":["AI4SDLC-Reviewers"]}'
-
-          
-      
+            -H "Content-Type: application/json" \
+            -d '{"team_reviewers":["ai4sdlc-reviewers"]}' \
+            https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers
+            
   # Build stage - converting md file to html using MkDocs
   convert_md_to_html:
     runs-on: ubuntu-latest
@@ -69,7 +68,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: 3.12
 
       - name: Install MkDocs and dependencies
         run: |
