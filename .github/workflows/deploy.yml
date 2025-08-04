@@ -54,8 +54,8 @@ jobs:
             -H "Authorization: token $GITHUB_TOKEN" \
             -H "Accept: application/vnd.github+json" \
             -H "Content-Type: application/json" \
-            https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers \
-            -d '{"team_reviewers":["ai4sdlc-reviewer"]}'
+            -d '{"team_reviewers":["ai4sdlc-reviewer"]}' \
+            https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers
 
   #         -d '{"reviewers":["vsong15"], "team_reviewers":["AI4SDLC-Reviewer"]}'
 
