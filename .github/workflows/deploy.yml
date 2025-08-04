@@ -54,7 +54,7 @@ jobs:
             -H "Authorization: token $ORG_PAT" \
             -H "Accept: application/vnd.github+json" \
             -H "Content-Type: application/json" \
-            -d '{"team_reviewers":["ai4sdlc-reviewer"]}' \
+            -d '{"team_reviewers":["ai4sdlc-reviewers"]}' \
             https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers
             
   # Build stage - converting md file to html using MkDocs
