@@ -46,7 +46,7 @@ jobs:
           https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/assignees \
           -d "{\"assignees\":[\"${{ github.actor }}\"]}"
       
-      - name: Assign reviewer via GitHub API
+      - name: Assign team reviewer via GitHub API
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -54,8 +54,9 @@ jobs:
             -H "Authorization: token $GITHUB_TOKEN" \
             -H "Accept: application/vnd.github+json" \
             -H "Content-Type: application/json" \
-            -d '{"reviewers":["vsong15"]}' \
+            -d '{"team_reviewers":["ai4sdlc-reviewer"]}' \
             https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers
+
 
   #         -d '{"reviewers":["vsong15"], "team_reviewers":["ai4sdlc-reviewer"]}'
 
