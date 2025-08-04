@@ -66,7 +66,7 @@ jobs:
           ORG_PAT: ${{ secrets.ORG_PAT }}
         run: |
           curl -v -X POST \
-            -H "Authorization: token $PRODUCTION_REPO_ACCESS_TOKEN" \
+            -H "Authorization: token $ORG_PAT" \
             -H "Accept: application/vnd.github+json" \
             -H "Content-Type: application/json" \
             -d '{"team_reviewers":["ai4sdlc-reviewer"]}' \
