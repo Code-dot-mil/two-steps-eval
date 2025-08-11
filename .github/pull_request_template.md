@@ -15,11 +15,21 @@ Include any extra information or considerations for reviewers, such as impacted 
 - [ ] Documentation reflects the changes made.
 - [ ] I have already covered the unit testing.
 
+<!-- Please include a summary of the change and which issue is fixed. -->
+
+## Preview
+
+:eyes: **Preview your changes here (replace `<PR_NUMBER>` with your PR number):**
+
+[http://het-rnd-bucket.s3-website-us-east-1.amazonaws.com/MergeRequest/<PR_NUMBER>/index.html](http://het-rnd-bucket.s3-website-us-east-1.amazonaws.com/MergeRequest/<PR_NUMBER>/index.html)
+
+---
+
 ## Assign to me - contributors
-/assign me
+Assignees will be assigned to me.
 
 ## Reviewers/Approvals
-/assign_reviewer @hshah @vsong
+Reviewers will be assigned to the ai4sdlc-reviewers group.
 
 ## Final Reviewers/Merger
-/assign_reviewer @hshah
+Final approvals will be assigned to the ai4sdlc-approval group.
