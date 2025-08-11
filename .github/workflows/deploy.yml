@@ -46,6 +46,15 @@ jobs:
           https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/assignees \
           -d "{\"assignees\":[\"${{ github.actor }}\"]}"
 
+          # Add a comment with the S3 preview link
+          PR_NUMBER=${{ github.event.pull_request.number }}
+          COMMENT="Preview your changes at: http://het-rnd-bucket.s3-website-us-east-1.amazonaws.com/MergeRequest/${PR_NUMBER}/index.html"
+          curl -X POST \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -d "{\"body\": \"$COMMENT\"}" \
+            https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/comments
+            
       - name: Assign team reviewer via GitHub API
         env:
           ORG_PAT: ${{ secrets.ORG_PAT }}
@@ -136,8 +145,8 @@ jobs:
           echo "pr_number while deploying =$PR_NUMBER"          
           pwd
           #aws s3 ls
-          #aws s3 sync site/ s3://$S3_BUCKET_NAME/test
-          #aws s3 sync site/ s3://$S3_BUCKET_NAME/MergeRequest/$PR_NUMBER
+          aws s3 sync site/ s3://$S3_BUCKET_NAME/test
+          aws s3 sync site/ s3://$S3_BUCKET_NAME/MergeRequest/$PR_NUMBER
          
   # Deployment to production folder in S3 bucket
   deploy_to_production:
