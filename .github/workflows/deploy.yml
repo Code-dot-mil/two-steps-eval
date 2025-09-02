@@ -183,4 +183,4 @@ jobs:
             -H "Authorization: Bearer $GITHUB_TOKEN" \
             $PR_API_URL | jq '.[0].number')
           echo "after pr_number=$PR_NUMBER"          
-          #aws s3 sync s3://$S3_BUCKET_NAME/MergeRequest/$PR_NUMBER s3://$S3_BUCKET_NAME/production/
+          aws s3 sync s3://$S3_BUCKET_NAME/MergeRequest/$PR_NUMBER s3://$S3_BUCKET_NAME/production/
