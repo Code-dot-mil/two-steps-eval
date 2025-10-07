@@ -58,7 +58,7 @@ jobs:
 
           # Add a comment with the S3 preview link
           PR_NUMBER=${{ github.event.pull_request.number }}
-          COMMENT="Preview your changes at: http://het-rnd-bucket.s3-website-us-east-1.amazonaws.com/mergeRequest/${PR_NUMBER}/index.html"
+          COMMENT="Preview your changes at: http://ai4sdlcmd.ai4sdlc.pub.aws.mitre.org/mergeRequest/${PR_NUMBER}/index.html"
           curl -X POST \
             -H "Authorization: token $GITHUB_TOKEN" \
             -H "Accept: application/vnd.github+json" \
