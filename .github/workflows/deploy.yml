@@ -10,9 +10,9 @@ on:
     types: [opened, ready_for_review, synchronize]   
 
 permissions:
-  contents: read
+  contents: read # This is required for actions/checkout
   pull-requests: write
-    
+  id-token: write # This is required requesting the JWT    
 
 jobs:
   auto_assign:
@@ -21,6 +21,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v1.7.0
+        with:
+          role-to-assume: arn:aws:iam::677043464939:role/GitHubAction-AssumeRoleWithAction
+          role-session-name: GitHub_to_AWS_via_FederatedOIDC
+          aws-region: us-east-1
+      # Hello from AWS: WhoAmI
+      - name: Sts GetCallerIdentity
+        run: |
+          aws sts get-caller-identity          
       - name: Print repo structure
         run: |
           pwd
