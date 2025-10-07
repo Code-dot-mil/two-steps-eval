@@ -150,7 +150,8 @@ jobs:
           aws-region: us-east-1
       - name: Deploy to Test Environment
         env:
-          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+          #S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+          S3_BUCKET_NAME: ai4sdlcmd.ai4sdlc.pub.aws.mitre.org
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           PR_API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls"
