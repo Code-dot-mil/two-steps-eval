@@ -58,7 +58,7 @@ jobs:
 
           # Add a comment with the S3 preview link
           PR_NUMBER=${{ github.event.pull_request.number }}
-          COMMENT="Preview your changes at: http://ai4sdlcmd.ai4sdlc.pub.aws.mitre.org/mergeRequest/${PR_NUMBER}/index.html"
+          COMMENT="Preview your changes at: http://${{ secrets.S3_BUCKET_NAME }}/mergeRequest/${PR_NUMBER}/index.html"
           curl -X POST \
             -H "Authorization: token $GITHUB_TOKEN" \
             -H "Accept: application/vnd.github+json" \
@@ -150,8 +150,7 @@ jobs:
           aws-region: us-east-1
       - name: Deploy to Test Environment
         env:
-          #S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
-          S3_BUCKET_NAME: ai4sdlcmd.ai4sdlc.pub.aws.mitre.org
+          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           PR_API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls"
@@ -169,12 +168,12 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' # Run for main branch
     steps:
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v1.7.0
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1  # change if needed
+          role-to-assume: arn:aws:iam::677043464939:role/GitHubAction-AssumeRoleWithAction
+          role-session-name: GitHub_to_AWS_via_FederatedOIDC
+          aws-region: us-east-1          
       - name: Get PR number from GitHub API
         id: pr
         run: |
