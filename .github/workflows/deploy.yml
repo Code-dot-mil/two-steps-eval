@@ -115,21 +115,21 @@ jobs:
   deploy_to_test:
     needs: convert_md_to_html
     runs-on: ubuntu-latest
-    if: github.ref != 'refs/heads/main' # Run for non-main branches
+    if: github.event_name == 'pull_request' && github.ref != 'refs/heads/main' # Run for non-main branches
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Get PR number from GitHub API
-        id: pr
-        run: |
-          PR_API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls"
-          PR_NUMBER=$(curl -s -H "Accept: application/vnd.github.groot-preview+json" \
-            -H "Authorization: Bearer $GITHUB_TOKEN" \
-            $PR_API_URL | jq '.[0].number')
-          echo "pr_number=$PR_NUMBER"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #- name: Get PR number from GitHub API
+      #  id: pr
+      #  run: |
+      #    PR_API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls"
+      #    PR_NUMBER=$(curl -s -H "Accept: application/vnd.github.groot-preview+json" \
+      #      -H "Authorization: Bearer $GITHUB_TOKEN" \
+      #      $PR_API_URL | jq '.[0].number')
+      #    echo "pr_number=$PR_NUMBER"
+      #  env:
+      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download artifacts
         uses: actions/download-artifact@v4
@@ -151,12 +151,13 @@ jobs:
       - name: Deploy to Test Environment
         env:
           S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          PR_API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls"
-          PR_NUMBER=$(curl -s -H "Accept: application/vnd.github.groot-preview+json" \
-            -H "Authorization: Bearer $GITHUB_TOKEN" \
-            $PR_API_URL | jq '.[0].number')
+          #PR_API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls"
+          #PR_NUMBER=$(curl -s -H "Accept: application/vnd.github.groot-preview+json" \
+          #  -H "Authorization: Bearer $GITHUB_TOKEN" \
+          #  $PR_API_URL | jq '.[0].number')
           echo "pr_number while deploying =$PR_NUMBER"          
           pwd
           aws s3 ls
