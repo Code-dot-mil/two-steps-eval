@@ -26,7 +26,7 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::677043464939:role/GitHubAction-AssumeRoleWithAction
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
-          aws-region: us-east-1
+          aws-region: ${{ secrets.AWS_REGION }}
       # Hello from AWS: WhoAmI
       - name: Sts GetCallerIdentity
         run: |
@@ -58,7 +58,7 @@ jobs:
 
           # Add a comment with the S3 preview link
           PR_NUMBER=${{ github.event.pull_request.number }}
-          COMMENT="Preview your changes at: http://het-rnd-bucket.s3-website-us-east-1.amazonaws.com/MergeRequest/${PR_NUMBER}/index.html"
+          COMMENT="Preview your changes at: http://${{ secrets.S3_BUCKET_NAME }}/mergeRequest/${PR_NUMBER}/index.html"
           curl -X POST \
             -H "Authorization: token $GITHUB_TOKEN" \
             -H "Accept: application/vnd.github+json" \
@@ -115,60 +115,66 @@ jobs:
   deploy_to_test:
     needs: convert_md_to_html
     runs-on: ubuntu-latest
-    if: github.ref != 'refs/heads/main' # Run for non-main branches
+    if: github.event_name == 'pull_request' && github.ref != 'refs/heads/main' # Run for non-main branches
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Get PR number from GitHub API
-        id: pr
-        run: |
-          PR_API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls"
-          PR_NUMBER=$(curl -s -H "Accept: application/vnd.github.groot-preview+json" \
-            -H "Authorization: Bearer $GITHUB_TOKEN" \
-            $PR_API_URL | jq '.[0].number')
-          echo "pr_number=$PR_NUMBER"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #- name: Get PR number from GitHub API
+      #  id: pr
+      #  run: |
+      #    PR_API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls"
+      #    PR_NUMBER=$(curl -s -H "Accept: application/vnd.github.groot-preview+json" \
+      #      -H "Authorization: Bearer $GITHUB_TOKEN" \
+      #      $PR_API_URL | jq '.[0].number')
+      #    echo "pr_number=$PR_NUMBER"
+      #  env:
+      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
           name: site
           path: site
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+      #- name: Configure AWS credentials
+      #  uses: aws-actions/configure-aws-credentials@v4
+      #  with:
+      #    aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #    aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #    aws-region: us-east-1  # change if needed
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v1.7.0
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1  # change if needed
-
+          role-to-assume: arn:aws:iam::677043464939:role/GitHubAction-AssumeRoleWithAction
+          role-session-name: GitHub_to_AWS_via_FederatedOIDC
+          aws-region: ${{ secrets.AWS_REGION }}
       - name: Deploy to Test Environment
         env:
           S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          PR_API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls"
-          PR_NUMBER=$(curl -s -H "Accept: application/vnd.github.groot-preview+json" \
-            -H "Authorization: Bearer $GITHUB_TOKEN" \
-            $PR_API_URL | jq '.[0].number')
+          #PR_API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls"
+          #PR_NUMBER=$(curl -s -H "Accept: application/vnd.github.groot-preview+json" \
+          #  -H "Authorization: Bearer $GITHUB_TOKEN" \
+          #  $PR_API_URL | jq '.[0].number')
           echo "pr_number while deploying =$PR_NUMBER"          
           pwd
-          #aws s3 ls
-          #aws s3 sync site/ s3://$S3_BUCKET_NAME/test
-          #aws s3 sync site/ s3://$S3_BUCKET_NAME/MergeRequest/$PR_NUMBER
+          aws s3 ls
+          aws s3 sync site/ s3://$S3_BUCKET_NAME/test
+          aws s3 sync site/ s3://$S3_BUCKET_NAME/mergeRequest/$PR_NUMBER
          
   # Deployment to production folder in S3 bucket
   deploy_to_production:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' # Run for main branch
     steps:
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v1.7.0
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1  # change if needed
+          role-to-assume: arn:aws:iam::677043464939:role/GitHubAction-AssumeRoleWithAction
+          role-session-name: GitHub_to_AWS_via_FederatedOIDC
+          aws-region: ${{ secrets.AWS_REGION }}          
       - name: Get PR number from GitHub API
         id: pr
         run: |
@@ -193,4 +199,4 @@ jobs:
             -H "Authorization: Bearer $GITHUB_TOKEN" \
             $PR_API_URL | jq '.[0].number')
           echo "after pr_number=$PR_NUMBER"          
-          aws s3 sync s3://$S3_BUCKET_NAME/MergeRequest/$PR_NUMBER s3://$S3_BUCKET_NAME/production/
+          aws s3 sync s3://$S3_BUCKET_NAME/mergeRequest/$PR_NUMBER s3://$S3_BUCKET_NAME/production/
