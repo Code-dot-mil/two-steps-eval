@@ -20,7 +20,7 @@ jobs:
     if: github.event_name == 'pull_request'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v1.7.0
         with:
@@ -44,7 +44,7 @@ jobs:
           ls -al .github
           cat .github/auto_assign.yml || echo "No auto_assign.yml found"
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Assign assignee via GitHub API
         env:
@@ -82,7 +82,7 @@ jobs:
     if: github.ref != 'refs/heads/main' # Run for non-main branches
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -118,7 +118,7 @@ jobs:
     if: github.event_name == 'pull_request' && github.ref != 'refs/heads/main' # Run for non-main branches
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       #- name: Get PR number from GitHub API
       #  id: pr
