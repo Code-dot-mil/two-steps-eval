@@ -20,9 +20,9 @@ jobs:
     if: github.event_name == 'pull_request'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v1.7.0
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::677043464939:role/GitHubAction-AssumeRoleWithAction
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
@@ -43,8 +43,6 @@ jobs:
           pwd
           ls -al .github
           cat .github/auto_assign.yml || echo "No auto_assign.yml found"
-
-      - uses: actions/checkout@v3
 
       - name: Assign assignee via GitHub API
         env:
@@ -82,7 +80,7 @@ jobs:
     if: github.ref != 'refs/heads/main' # Run for non-main branches
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -118,7 +116,7 @@ jobs:
     if: github.event_name == 'pull_request' && github.ref != 'refs/heads/main' # Run for non-main branches
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       #- name: Get PR number from GitHub API
       #  id: pr
@@ -200,3 +198,6 @@ jobs:
             $PR_API_URL | jq '.[0].number')
           echo "after pr_number=$PR_NUMBER"          
           aws s3 sync s3://$S3_BUCKET_NAME/mergeRequest/$PR_NUMBER s3://$S3_BUCKET_NAME/production/
+          echo "deploy complete..."
+          # Delete contents of the pr folder
+          aws s3 rm s3://$S3_BUCKET_NAME/mergeRequest/$PR_NUMBER --recursive
