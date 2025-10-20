@@ -21,7 +21,7 @@ Include any extra information or considerations for reviewers, such as impacted 
 
 :eyes: **Preview your changes here (replace `<PR_NUMBER>` with your PR number):**
 
-[http://het-rnd-bucket.s3-website-us-east-1.amazonaws.com/MergeRequest/<PR_NUMBER>/index.html](http://het-rnd-bucket.s3-website-us-east-1.amazonaws.com/MergeRequest/<PR_NUMBER>/index.html)
+[http://ai4sdlcmd.ai4sdlc.c3ib.org/MergeRequest/<PR_NUMBER>/index.html](http://ai4sdlcmd.ai4sdlc.c3ib.org/MergeRequest/<PR_NUMBER>/index.html)
 
 ---
 
