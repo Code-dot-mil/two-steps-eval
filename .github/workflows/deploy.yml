@@ -19,6 +19,14 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
+      - name: Sanity-check secret
+        env:
+          ORG_PAT: ${{ secrets.ORG_PAT }}
+        run: |
+            if [ -z "$ORG_PAT" ]; then
+              echo "ORG_PAT is empty"; exit 1
+            fi
+              
       - name: Checkout code
         uses: actions/checkout@v4
       - name: configure aws credentials
@@ -65,7 +73,7 @@ jobs:
             
       - name: Assign team reviewer via GitHub API
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ORG_PAT: ${{ secrets.ORG_PAT }}
         run: |
           curl -X POST \
             -H "Authorization: Bearer $GITHUB_TOKEN" \
