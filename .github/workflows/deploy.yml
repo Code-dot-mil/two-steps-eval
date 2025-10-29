@@ -65,10 +65,10 @@ jobs:
             
       - name: Assign team reviewer via GitHub API
         env:
-          ORG_PAT: ${{ secrets.ORG_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           curl -X POST \
-            -H "Authorization: token $ORG_PAT" \
+            -H "Authorization: token $GITHUB_TOKEN" \
             -H "Accept: application/vnd.github+json" \
             -H "Content-Type: application/json" \
             -d '{"team_reviewers":["ai4sdlc-reviewers"]}' \
