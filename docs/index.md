@@ -5,7 +5,7 @@ author: That Would Be Me
 # AI4SDLC
 # Change one
 
-# Change six 6
+# Change seven 7
 # hello
 ## Getting started
 # hello
