@@ -78,9 +78,10 @@ jobs:
             -d '{"team_reviewers":["ai4sdlc-reviewers"]}' \
             https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers
 
+  # notify final reviewers
   notify_final_reviewer:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request_review'
+    if: github.event_name == 'pull_request_review' && github.event.review.state == 'approved'
     steps:
       - name: Notify final reviewer team
         env:
@@ -94,7 +95,8 @@ jobs:
             -H "Authorization: token $GITHUB_TOKEN" \
             -H "Accept: application/vnd.github+json" \
             -d "{\"body\": \"$COMMENT\"}" \
-            https://api.github.com/repos/${{ github.repository }}/issues/$PR_NUMBER/comments            
+            https://api.github.com/repos/${{ github.repository }}/issues/$PR_NUMBER/comments
+            
   # Build stage - converting md file to html using MkDocs
   convert_md_to_html:
     runs-on: ubuntu-latest
