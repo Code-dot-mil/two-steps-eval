@@ -80,7 +80,7 @@ jobs:
 
   notify_final_reviewer:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request_review' && github.event.review.state == 'approved'
+    if: github.event_name == 'pull_request_review'
     steps:
       - name: Notify final reviewer team
         env:
