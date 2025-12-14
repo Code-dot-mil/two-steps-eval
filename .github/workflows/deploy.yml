@@ -7,7 +7,11 @@ on:
       - "*"
 
   pull_request:
-    types: [opened, ready_for_review, synchronize]   
+    types: [opened, ready_for_review, synchronize]
+
+  pull_request_review:
+    types: [submitted]
+    
 
 permissions:
   contents: read # This is required for actions/checkout
@@ -73,7 +77,24 @@ jobs:
             -H "Content-Type: application/json" \
             -d '{"team_reviewers":["ai4sdlc-reviewers"]}' \
             https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/requested_reviewers
-            
+
+  notify_final_reviewer:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request_review'
+    steps:
+      - name: Notify final reviewer team
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER=${{ github.event.pull_request.number }}
+          REVIEWER=${{ github.event.review.user.login }}
+          TEAM_HANDLE="@${{ github.repository_owner }}/ai4sdlc-approval"
+          COMMENT="$TEAM_HANDLE PR #$PR_NUMBER has been approved by @$REVIEWER and is ready for final review."
+          curl -X POST \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -d "{\"body\": \"$COMMENT\"}" \
+            https://api.github.com/repos/${{ github.repository }}/issues/$PR_NUMBER/comments            
   # Build stage - converting md file to html using MkDocs
   convert_md_to_html:
     runs-on: ubuntu-latest
