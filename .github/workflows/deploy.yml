@@ -7,7 +7,7 @@ on:
       - "*"
 
   pull_request:
-    types: [opened, ready_for_review, synchronize]
+    types: [opened, ready_for_review, synchronize, closed]
 
   pull_request_review:
     types: [submitted]
@@ -212,7 +212,7 @@ jobs:
         run: |
           echo "inside pr_number=$PR_NUMBER"
           echo "Before pr_number=$PR_NUMBER"
-          PR_NUMBER='${{ steps.pr.outputs.PR_NUMBER }}'
+          PR_NUMBER=${{ github.event.pull_request.number }}
           echo "USING PR_NUMBER =$PR_NUMBER"
           
           #PR_API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls"
