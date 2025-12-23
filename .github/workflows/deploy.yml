@@ -166,7 +166,7 @@ jobs:
       #    aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       #    aws-region: us-east-1  # change if needed
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v2.0
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: arn:aws:iam::677043464939:role/GitHubAction-AssumeRoleWithAction
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
