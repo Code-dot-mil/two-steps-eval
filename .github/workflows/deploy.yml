@@ -185,7 +185,7 @@ jobs:
   # Deployment to production folder in S3 bucket
   deploy_to_production:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' # Run for main branch
+    #if: github.ref == 'refs/heads/main' # Run for main branch
     steps:
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -211,7 +211,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}          
         run: |
           echo "inside pr_number=$PR_NUMBER"
-          echo "Before pr_number=$PR_NUMBER"        
+          echo "Before pr_number=$PR_NUMBER"
+          PR='${{ steps.pr.outputs.PR_NUMBER }}'
+          echo "USING PR =$PR"
           
           PR_API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls"
           PR_NUMBER=$(curl -s -H "Accept: application/vnd.github.groot-preview+json" \
