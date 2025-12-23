@@ -211,32 +211,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}          
         run: |
           echo "inside pr_number=$PR_NUMBER"
-          echo "Before pr_number=$PR_NUMBER"
-
-          # Query all pull requests (open, closed, and merged)
-          PR_API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls"
-          PR_NUMBER=$(curl -s -H "Accept: application/vnd.github.v3+json" \
+          echo "Before pr_number=$PR_NUMBER"        
+          
+          PR_API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls"
+          PR_NUMBER=$(curl -s -H "Accept: application/vnd.github.groot-preview+json" \
             -H "Authorization: Bearer $GITHUB_TOKEN" \
-            $PR_API_URL | jq '.[] | select(.head.sha == "'${GITHUB_SHA}'") | .number')
+            $PR_API_URL | jq '.[0].number')
+          echo "after pr_number=$PR_NUMBER"
           
-          # Fallback: Retrieve PR number from GITHUB_EVENT_PATH if API fails
-          if [ -z "$PR_NUMBER" ]; then
-            echo "PR number not found via API. Attempting fallback..."
-            PR_NUMBER=$(jq -r '.pull_request.number // empty' < "$GITHUB_EVENT_PATH")
-          fi
-          
-          if [ -z "$PR_NUMBER" ]; then
-            echo "No PR associated with this commit. Skipping deployment."
-            exit 0
-          fi
-        
-
-          
-          #PR_API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls"
-          #PR_NUMBER=$(curl -s -H "Accept: application/vnd.github.groot-preview+json" \
-          #  -H "Authorization: Bearer $GITHUB_TOKEN" \
-          #  $PR_API_URL | jq '.[0].number')
-          #echo "after pr_number=$PR_NUMBER"          
           aws s3 sync s3://$S3_BUCKET_NAME/mergeRequest/$PR_NUMBER s3://$S3_BUCKET_NAME/production/
           echo "deploy complete to production !!!"
           # Delete contents of the pr folder
