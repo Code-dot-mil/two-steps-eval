@@ -213,15 +213,22 @@ jobs:
           echo "inside pr_number=$PR_NUMBER"
           echo "Before pr_number=$PR_NUMBER"
 
-          PR_API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls?state=open"
+          # Query all pull requests (open, closed, and merged)
+          PR_API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls"
           PR_NUMBER=$(curl -s -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: Bearer $GITHUB_TOKEN" \
             $PR_API_URL | jq '.[] | select(.head.sha == "'${GITHUB_SHA}'") | .number')
+          
+          # Fallback: Retrieve PR number from GITHUB_EVENT_PATH if API fails
+          if [ -z "$PR_NUMBER" ]; then
+            echo "PR number not found via API. Attempting fallback..."
+            PR_NUMBER=$(jq -r '.pull_request.number // empty' < "$GITHUB_EVENT_PATH")
+          fi
+          
           if [ -z "$PR_NUMBER" ]; then
             echo "No PR associated with this commit. Skipping deployment."
             exit 0
           fi
-          echo "PR_NUMBER=$PR_NUMBER"
         
 
           
