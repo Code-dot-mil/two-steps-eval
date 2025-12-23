@@ -186,6 +186,10 @@ jobs:
   deploy_to_production:
     runs-on: ubuntu-latest
     #if: github.ref == 'refs/heads/main' # Run for main branch
+    if: github.event_name == 'pull_request' &&
+        github.event.action == 'closed' &&
+        github.event.pull_request.merged == true &&
+        github.event.pull_request.base.ref == 'main'
     steps:
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v2
