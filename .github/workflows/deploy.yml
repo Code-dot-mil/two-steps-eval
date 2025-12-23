@@ -60,7 +60,7 @@ jobs:
 
           # Add a comment with the S3 preview link
           PR_NUMBER=${{ github.event.pull_request.number }}
-          COMMENT="Preview your changes at: http://${{ secrets.S3_BUCKET_NAME }}/mergeRequest/${PR_NUMBER}/index.html"
+          COMMENT="Please review the changes at the following site: http://${{ secrets.S3_BUCKET_NAME }}/mergeRequest/${PR_NUMBER}/index.html"
           curl -X POST \
             -H "Authorization: token $GITHUB_TOKEN" \
             -H "Accept: application/vnd.github+json" \
@@ -159,12 +159,7 @@ jobs:
         with:
           name: site
           path: site
-      #- name: Configure AWS credentials
-      #  uses: aws-actions/configure-aws-credentials@v4
-      #  with:
-      #    aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #    aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #    aws-region: us-east-1  # change if needed
+          
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -193,7 +188,7 @@ jobs:
     if: github.ref == 'refs/heads/main' # Run for main branch
     steps:
       - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v1.7.0
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: arn:aws:iam::677043464939:role/GitHubAction-AssumeRoleWithAction
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
