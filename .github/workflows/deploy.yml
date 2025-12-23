@@ -212,13 +212,13 @@ jobs:
         run: |
           echo "inside pr_number=$PR_NUMBER"
           echo "Before pr_number=$PR_NUMBER"
-          PR='${{ steps.pr.outputs.PR_NUMBER }}'
-          echo "USING PR =$PR"
+          PR_NUMBER='${{ steps.pr.outputs.PR_NUMBER }}'
+          echo "USING PR_NUMBER =$PR_NUMBER"
           
-          PR_API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls"
-          PR_NUMBER=$(curl -s -H "Accept: application/vnd.github.groot-preview+json" \
-            -H "Authorization: Bearer $GITHUB_TOKEN" \
-            $PR_API_URL | jq '.[0].number')
+          #PR_API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls"
+          #PR_NUMBER=$(curl -s -H "Accept: application/vnd.github.groot-preview+json" \
+          #  -H "Authorization: Bearer $GITHUB_TOKEN" \
+          #  $PR_API_URL | jq '.[0].number')
           echo "after pr_number=$PR_NUMBER"
           
           aws s3 sync s3://$S3_BUCKET_NAME/mergeRequest/$PR_NUMBER s3://$S3_BUCKET_NAME/production/
