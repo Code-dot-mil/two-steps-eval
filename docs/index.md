@@ -3,17 +3,8 @@ title: My post
 author: That Would Be Me
 ---
 # AI4SDLC
-# Dec 22 11:39 Updating this line
-# Dec 22 12:05 Updating this line
-# Dec 22 12:17 Updating this line
-# Dec 23 01:38 Updating this line
-# Dec 23 04:15 Updating this line
-# Dec 23 04:39 Updating this line
-# Dec 23 04:39 Updating this line
-# Dec 23 05:58 Updating this line
-# Dec 23 06:47 Updating this line
-# Dec 23 06:45 Updating this line
-# test 1
+# Dec 24 10:56 Updating this line
+
 
 # Change seven 7
 # Change six 6 👋👋👋 ✅ adding... (change)...
