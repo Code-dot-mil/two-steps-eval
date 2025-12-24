@@ -1,10 +1,10 @@
 name: CI/CD Pipeline
 
 on:
-  push:
-    branches:
-      - main
-      - "*"
+  #push:
+  #  branches:
+  #    - main
+  #    - "*"
 
   pull_request:
     types: [opened, ready_for_review, synchronize, closed]
@@ -21,7 +21,7 @@ permissions:
 jobs:
   auto_assign:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && github.event.action != 'closed'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -113,7 +113,10 @@ jobs:
   # Build stage - converting md file to html using MkDocs
   convert_md_to_html:
     runs-on: ubuntu-latest
-    if: github.ref != 'refs/heads/main' # Run for non-main branches
+    #if: github.ref != 'refs/heads/main' # Run for non-main branches
+    if: github.event_name == 'pull_request' &&
+        github.event.action != 'closed' &&
+        github.event.pull_request.base.ref == 'main'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -149,7 +152,10 @@ jobs:
   deploy_to_test:
     needs: convert_md_to_html
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && github.ref != 'refs/heads/main' # Run for non-main branches
+    #if: github.event_name == 'pull_request' && github.ref != 'refs/heads/main' # Run for non-main branches
+    if: github.event_name == 'pull_request' &&
+        github.event.action != 'closed' &&
+        github.event.pull_request.base.ref == 'main'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -197,26 +203,27 @@ jobs:
           role-to-assume: arn:aws:iam::677043464939:role/GitHubAction-AssumeRoleWithAction
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
           aws-region: ${{ secrets.AWS_REGION }}          
-      - name: Get PR number from GitHub API
-        id: pr
-        run: |
-          echo "Before pr_number=$PR_NUMBER"
-          PR_API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls"
-          PR_NUMBER=$(curl -s -H "Accept: application/vnd.github.groot-preview+json" \
-            -H "Authorization: Bearer $GITHUB_TOKEN" \
-            $PR_API_URL | jq '.[0].number')
-          echo "after pr_number=$PR_NUMBER"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #- name: Get PR number from GitHub API
+      #  id: pr
+      #  run: |
+      #    echo "Before pr_number=$PR_NUMBER"
+      #    PR_API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls"
+      #    PR_NUMBER=$(curl -s -H "Accept: application/vnd.github.groot-preview+json" \
+      #      -H "Authorization: Bearer $GITHUB_TOKEN" \
+      #      $PR_API_URL | jq '.[0].number')
+      #    echo "after pr_number=$PR_NUMBER"
+      #  env:
+      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Deploy to Production Environment
         env:
           S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}          
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           echo "inside pr_number=$PR_NUMBER"
           echo "Before pr_number=$PR_NUMBER"
-          PR_NUMBER=${{ github.event.pull_request.number }}
+          #PR_NUMBER=${{ github.event.pull_request.number }}
           echo "USING PR_NUMBER =$PR_NUMBER"
           
           #PR_API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls"
