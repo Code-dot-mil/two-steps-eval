@@ -21,11 +21,8 @@ permissions:
 jobs:
   auto_assign:
     runs-on: ubuntu-latest
-    #if: github.event_name == 'pull_request' && github.event.action != 'closed'
-    if: github.event.review.state == 'commented'
-    steps:
-      - name: Debug Reviewer Login
-        run: echo "Reviewer Login:${{ github.event.review.user.login }}"        
+    if: github.event_name == 'pull_request' && github.event.action != 'closed'
+    steps:     
       - name: Checkout code
         uses: actions/checkout@v4
       - name: configure aws credentials
@@ -95,7 +92,9 @@ jobs:
           PR_NUMBER=${{ github.event.pull_request.number }}
           REVIEWER=${{ github.event.review.user.login }}
           TEAM_HANDLE="@${{ github.repository_owner }}/ai4sdlc-approval"
-          COMMENT="$TEAM_HANDLE PR #$PR_NUMBER has a new review comment from @$REVIEWER and is ready for final review."
+          #COMMENT="$TEAM_HANDLE PR #$PR_NUMBER has a new review comment from @$REVIEWER and is ready for final review."
+          COMMENT="$TEAM_HANDLE PR #$PR_NUMBER has a new review comment from @$REVIEWER and is ready for final review. Please review the changes at the following site: http://${{ secrets.S3_BUCKET_NAME }}/mergeRequest/${PR_NUMBER}/index.html"
+
   
           curl -X POST \
             -H "Authorization: token $GITHUB_TOKEN" \
