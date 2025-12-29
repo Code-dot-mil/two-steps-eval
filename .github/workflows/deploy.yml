@@ -133,6 +133,14 @@ jobs:
           echo "Building your project..."
           mkdocs build
           echo "pwd in build project with MKDocs"
+      - name: Add .nojekyll
+        run: touch site/.nojekyll
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site   
 ###
             
   # Build stage - converting md file to html using MkDocs
