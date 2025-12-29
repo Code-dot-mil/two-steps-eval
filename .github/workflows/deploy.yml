@@ -14,7 +14,7 @@ on:
     
 
 permissions:
-  contents: read # This is required for actions/checkout
+  contents: write # This is required for actions/checkout
   pull-requests: write
   id-token: write # This is required requesting the JWT    
 
@@ -92,7 +92,9 @@ jobs:
           PR_NUMBER=${{ github.event.pull_request.number }}
           REVIEWER=${{ github.event.review.user.login }}
           TEAM_HANDLE="@${{ github.repository_owner }}/ai4sdlc-approval"
-          COMMENT="$TEAM_HANDLE PR #$PR_NUMBER has a new review comment from @$REVIEWER and is ready for final review."
+          #COMMENT="$TEAM_HANDLE PR #$PR_NUMBER has a new review comment from @$REVIEWER and is ready for final review."
+          COMMENT="$TEAM_HANDLE PR #$PR_NUMBER has a new review comment from @$REVIEWER and is ready for final review. Please review the changes at the following site: http://${{ secrets.S3_BUCKET_NAME }}/mergeRequest/${PR_NUMBER}/index.html"
+
   
           curl -X POST \
             -H "Authorization: token $GITHUB_TOKEN" \
@@ -108,7 +110,6 @@ jobs:
             -H "Content-Type: application/json" \
             -d "{\"team_reviewers\":[\"ai4sdlc-approval\"]}" \
             https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER/requested_reviewers -v
-
             
   # Build stage - converting md file to html using MkDocs
   convert_md_to_html:
@@ -237,3 +238,41 @@ jobs:
           # Delete contents of the pr folder
           aws s3 rm s3://$S3_BUCKET_NAME/mergeRequest/$PR_NUMBER --recursive
           echo "PR folder deleted successfully !!!"
+
+###
+  # Build stage - converting md file to html using MkDocs
+  deploy_to_page :
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' &&
+        github.event.action == 'closed' &&
+        github.event.pull_request.merged == true &&
+        github.event.pull_request.base.ref == 'main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Install MkDocs and dependencies
+        run: |
+          pip install mkdocs mkdocs-material
+
+      - name: Build project with MkDocs
+        run: |
+          echo "Building your project..."
+          mkdocs build
+          echo "pwd in build project with MKDocs"
+          
+      - name: Add .nojekyll
+        run: touch site/.nojekyll
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site   
+###
+          
