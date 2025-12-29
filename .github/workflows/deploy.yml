@@ -109,6 +109,31 @@ jobs:
             -d "{\"team_reviewers\":[\"ai4sdlc-approval\"]}" \
             https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER/requested_reviewers -v
 
+
+###
+  # Build stage - converting md file to html using MkDocs
+  convert_md_to_html_gh :
+    runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/main' # Run for non-main branches
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Install MkDocs and dependencies
+        run: |
+          pip install mkdocs mkdocs-material
+
+      - name: Build project with MkDocs
+        run: |
+          echo "Building your project..."
+          mkdocs build
+          echo "pwd in build project with MKDocs"
+###
             
   # Build stage - converting md file to html using MkDocs
   convert_md_to_html:
