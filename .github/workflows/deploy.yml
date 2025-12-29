@@ -22,7 +22,7 @@ jobs:
   auto_assign:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request' && github.event.action != 'closed'
-    steps:     
+    steps:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: configure aws credentials
